@@ -30,6 +30,28 @@ function GameControl({ resetGameCb }) {
     );
 }
 
+function getWinningIndexes() {
+    // Still have to figure a proper algorithm
+    // in the meantime, checking against all the solutions should be fast enough ?
+    const winning_indexes = [];
+
+    // column indexes
+    winning_indexes.push([0, 3, 6]);
+    winning_indexes.push([1, 4, 7]);
+    winning_indexes.push([2, 5, 8]);
+
+    // row indexes
+    winning_indexes.push([0, 1, 2]);
+    winning_indexes.push([3, 4, 5]);
+    winning_indexes.push([6, 7, 8]);
+
+    // diagonal indexes
+    winning_indexes.push([0, 4, 8]);
+    winning_indexes.push([2, 4, 6]);
+
+    return winning_indexes;
+}
+
 
 export default function Board() {
     const [squares, setSquares] = useState(Array(9).fill(null));
@@ -44,63 +66,41 @@ export default function Board() {
         setWinner(null);
     }
 
-    function getIndex(row, col) {
-        return (row * N_COL) + col;
-    }
-
     function checkWinner(squares) {
-        const N_ROW = 3;
-        const N_COL = 3;
-        let no_winner = 'None';
+        // TODO: cache. In state or elsewhere ?
+        // use memoize for fun ?
+        const winningIndexes = getWinningIndexes();
 
-        // check rows for row winners
-        // we use a label to use with continue
-        checkRow: for (let row = 0; row < N_ROW; row++) {
-            console.log('row winner: row loop');
-            let previous = null;
-            let current = null;
+        let winner = 'None';
+    
+        // some() stops on the first true return
+        winningIndexes.some(index_list => {
+            // test against the index_list
 
-            for (let col = 0; col < N_COL; col++) {
-                console.log(`row winner: col loop: ${col}`);
+            // first identify the player
+            const player = squares[index_list[0]];
 
-                current = squares[getIndex(row, col)];
-                console.log(`current: ${current}, row: ${row}`);
+            // only parse if the square is marked by a player
+            if (player !== null) {
+                // every() stops on the first false return
+                const result = index_list.every(idx => {
+                    return squares[idx] === player;
+                });
 
-                if (current == null) {
-                    // failure, check another row
-                    console.log("continue checkRow");
-                    continue checkRow;
-                }
-                
-                if (previous == null) {
-                    previous = current;
-                    // we are at the start of the row
-                    // go to next column
-                    console.log("start of the row, continue col");
-                    continue;
+                // feels clumsy to modify in a some callback
+                // Fonctional Programming paradigms loves more immutable things
+                if (result !== false) {
+                    winner = player;
                 }
 
-                if (current == previous) {
-                    // success and go to next column
-                    // previous doesn't need update
-                    // because its the same as current. TODO: clumsy ?
-                    console.log("continue col");
-                    continue;
-                } else {
-                    // failure, check another row
-                    console.log("continue checkRow");
-                    continue checkRow;
-                }
+                return result;
+            // no player, return false and go to the next some() iteration
+            } else {
+                return false;
             }
+        });
 
-            // We got through each column, return the winner
-            return current;
-        }
-
-        // check for diagonal
-
-        // checkRow loop did not return
-        return no_winner;
+        return winner;
     }
 
     function squareClicked(squareIndex) {
@@ -120,7 +120,7 @@ export default function Board() {
 
                 const winner = checkWinner(nextSquares);
 
-                if (winner != 'None') {
+                if (winner !== 'None') {
                     setWinner(winner);
                 }
                 
