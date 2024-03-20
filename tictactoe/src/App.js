@@ -24,36 +24,7 @@ function GameStatus({ player, winner = null}) {
     );
 }
 
-function GameControl({ resetGameCb }) {
-    return (
-        <button onClick={resetGameCb}>Reset Game</button>
-    );
-}
-
-function getWinningIndexes() {
-    // Still have to figure a proper algorithm
-    // in the meantime, checking against all the solutions should be fast enough ?
-    const winning_indexes = [];
-
-    // column indexes
-    winning_indexes.push([0, 3, 6]);
-    winning_indexes.push([1, 4, 7]);
-    winning_indexes.push([2, 5, 8]);
-
-    // row indexes
-    winning_indexes.push([0, 1, 2]);
-    winning_indexes.push([3, 4, 5]);
-    winning_indexes.push([6, 7, 8]);
-
-    // diagonal indexes
-    winning_indexes.push([0, 4, 8]);
-    winning_indexes.push([2, 4, 6]);
-
-    return winning_indexes;
-}
-
-
-export default function Board() {
+export default function Game() {
     const [squares, setSquares] = useState(Array(9).fill(null));
 
     const [player, setPlayer] = useState('X');
@@ -62,6 +33,7 @@ export default function Board() {
 
     const WINNING_INDEXES = getWinningIndexes();
 
+    // TODO: too many and long functions heres, is there another way
     function resetGameCb() {
         setSquares(Array(9).fill(null));
         setPlayer('X');
@@ -131,28 +103,60 @@ export default function Board() {
         }
     }
 
+    // TODO: props and function naming conventions with onEvent, eventCb, ... ?
+    return (
+        <>
+            <GameStatus player={player} winner={winner}/>
+            <Board squares={squares} squareClickedCb={squareClicked} />
+            <button onClick={resetGameCb}>Reset Game</button>
+        </>
+    );
+}
+
+function getWinningIndexes() {
+    // Still have to figure a proper algorithm
+    // in the meantime, checking against all the solutions should be fast enough ?
+    const winning_indexes = [];
+
+    // column indexes
+    winning_indexes.push([0, 3, 6]);
+    winning_indexes.push([1, 4, 7]);
+    winning_indexes.push([2, 5, 8]);
+
+    // row indexes
+    winning_indexes.push([0, 1, 2]);
+    winning_indexes.push([3, 4, 5]);
+    winning_indexes.push([6, 7, 8]);
+
+    // diagonal indexes
+    winning_indexes.push([0, 4, 8]);
+    winning_indexes.push([2, 4, 6]);
+
+    return winning_indexes;
+}
+
+
+export function Board({squares, squareClickedCb, }) {
     // caveats for JS newbies: onSquareClicked must be a function
     // and not a function call, hence the use of anonymous function
     // TODO: error prone with the index typed manually
     return (
         <>
-            <GameStatus player={player} winner={winner}/>
             <div className="board-row">
-                <Square symbol={squares[0]} onSquareClicked={ () => squareClicked(0) }/>
-                <Square symbol={squares[1]} onSquareClicked={ () => squareClicked(1) }/>
-                <Square symbol={squares[2]} onSquareClicked={ () => squareClicked(2) }/>
+                <Square symbol={squares[0]} onSquareClicked={ () => squareClickedCb(0) }/>
+                <Square symbol={squares[1]} onSquareClicked={ () => squareClickedCb(1) }/>
+                <Square symbol={squares[2]} onSquareClicked={ () => squareClickedCb(2) }/>
             </div>
             <div className="board-row">
-                <Square symbol={squares[3]} onSquareClicked={ () => squareClicked(3) }/>
-                <Square symbol={squares[4]} onSquareClicked={ () => squareClicked(4) }/>
-                <Square symbol={squares[5]} onSquareClicked={ () => squareClicked(5) }/>
+                <Square symbol={squares[3]} onSquareClicked={ () => squareClickedCb(3) }/>
+                <Square symbol={squares[4]} onSquareClicked={ () => squareClickedCb(4) }/>
+                <Square symbol={squares[5]} onSquareClicked={ () => squareClickedCb(5) }/>
             </div>
             <div className="board-row">
-                <Square symbol={squares[6]} onSquareClicked={ () => squareClicked(6) }/>
-                <Square symbol={squares[7]} onSquareClicked={ () => squareClicked(7) }/>
-                <Square symbol={squares[8]} onSquareClicked={ () => squareClicked(8) }/>
+                <Square symbol={squares[6]} onSquareClicked={ () => squareClickedCb(6) }/>
+                <Square symbol={squares[7]} onSquareClicked={ () => squareClickedCb(7) }/>
+                <Square symbol={squares[8]} onSquareClicked={ () => squareClickedCb(8) }/>
             </div>
-            <GameControl resetGameCb={resetGameCb} />
         </>
     );
 }
