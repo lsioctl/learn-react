@@ -60,6 +60,8 @@ export default function Board() {
 
     const [winner, setWinner] = useState(null);
 
+    const WINNING_INDEXES = getWinningIndexes();
+
     function resetGameCb() {
         setSquares(Array(9).fill(null));
         setPlayer('X');
@@ -67,14 +69,10 @@ export default function Board() {
     }
 
     function checkWinner(squares) {
-        // TODO: cache. In state or elsewhere ?
-        // use memoize for fun ?
-        const winningIndexes = getWinningIndexes();
-
         let winner = 'None';
     
         // some() stops on the first true return
-        winningIndexes.some(index_list => {
+        WINNING_INDEXES.some(index_list => {
             // test against the index_list
 
             // first identify the player
