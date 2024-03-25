@@ -51,20 +51,23 @@ export default function Game() {
         setWinner(null);
     }
 
+    function setNextPlayer() {
+        if (player === 'X') {
+            setPlayer('O');
+        } else {
+            setPlayer('X');
+        }
+    }
+
     function prevHistoryCb() {
-        console.log('current history');
-        console.log(history);
-        console.log('next history');
-        console.log(history.slice(0, historyIndex));
-        setSquares(history[historyIndex - 1]);
-        setHistory(history.slice(0, historyIndex));
-        setHistoryIndex(historyIndex - 1);
-        // TODO: function ?
-        // if (symbol === 'X') {
-        //     setPlayer('X');
-        // } else {
-        //     setPlayer('0');
-        // }
+        if (historyIndex > 0) {
+            setSquares(history[historyIndex - 1]);
+            setHistory(history.slice(0, historyIndex));
+            setHistoryIndex(historyIndex - 1);
+        
+            setNextPlayer();
+            setWinner(null);
+        }
     }
 
     function checkWinner(squares) {
@@ -107,10 +110,8 @@ export default function Game() {
                 // work in the immutable way => copy the state
                 const nextSquares = squares.slice();
 
-                // get the current player
-                const symbol = player;
                 // set the correct value
-                nextSquares[squareIndex] = symbol;
+                nextSquares[squareIndex] = player;
 
                 // First ensure history contains no future
                 // move, as we are creating a new future by clicking
@@ -133,8 +134,7 @@ export default function Game() {
                     setWinner(winner);
                 }
                 
-                // TODO: function ?
-                if (symbol === 'X') {
+                if (player === 'X') {
                     setPlayer('O');
                 } else {
                     setPlayer('X');
