@@ -24,12 +24,23 @@ function GameStatus({ player, winner = null}) {
     );
 }
 
+function Button({ onClickCb, text }) {
+    return (
+        <div>
+            <button onClick={onClickCb}>{text}</button>
+        </div>
+    )
+}
+
 export default function Game() {
     const [squares, setSquares] = useState(Array(9).fill(null));
 
     const [player, setPlayer] = useState('X');
 
     const [winner, setWinner] = useState(null);
+
+    const [history, setHistory] = useState([[...squares]]);
+    const [historyIndex, setHistoryIndex] = useState(0);
 
     const WINNING_INDEXES = getWinningIndexes();
 
@@ -38,6 +49,22 @@ export default function Game() {
         setSquares(Array(9).fill(null));
         setPlayer('X');
         setWinner(null);
+    }
+
+    function prevHistoryCb() {
+        console.log('current history');
+        console.log(history);
+        console.log('next history');
+        console.log(history.slice(0, historyIndex));
+        setSquares(history[historyIndex - 1]);
+        setHistory(history.slice(0, historyIndex));
+        setHistoryIndex(historyIndex - 1);
+        // TODO: function ?
+        // if (symbol === 'X') {
+        //     setPlayer('X');
+        // } else {
+        //     setPlayer('0');
+        // }
     }
 
     function checkWinner(squares) {
@@ -85,6 +112,18 @@ export default function Game() {
                 // set the correct value
                 nextSquares[squareIndex] = symbol;
 
+                // First ensure history contains no future
+                // move, as we are creating a new future by clicking
+                //const nextHistory = history.slice(0, historyIndex);
+                const nextHistory = history.slice();
+                nextHistory.push(nextSquares);
+                
+                // TODO: is a race condition possible here ? => should update both in
+                // the same operation
+                // update the history
+                setHistory(nextHistory);
+                setHistoryIndex(historyIndex + 1);
+
                 // set the new state
                 setSquares(nextSquares);
 
@@ -94,6 +133,7 @@ export default function Game() {
                     setWinner(winner);
                 }
                 
+                // TODO: function ?
                 if (symbol === 'X') {
                     setPlayer('O');
                 } else {
@@ -108,7 +148,9 @@ export default function Game() {
         <>
             <GameStatus player={player} winner={winner}/>
             <Board squares={squares} squareClickedCb={squareClicked} />
-            <button onClick={resetGameCb}>Reset Game</button>
+            <Button onClickCb={resetGameCb} text='Reset game' />
+            <Button onClickCb={prevHistoryCb} text='Prev move' />
+
         </>
     );
 }
