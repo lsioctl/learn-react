@@ -5,21 +5,23 @@ import { useState } from 'react';
 // so we avoid const value = props.index in the function
 function Square({ symbol, onSquareClicked }) {
     return (
-        <button className="square" onClick={onSquareClicked}>{symbol}</button>
+        <div className="square" onClick={onSquareClicked}>{symbol}</div>
     );
 }
 
 function GameStatus({ player, winner = null}) {
     let message = '';
     if (winner != null) {
-        message = `player ${winner} wins !`;
+        message = `Player ${winner} wins !`;
     } else {
-        message = `player ${player} turn`;
+        message = `Player ${player} turn`;
     }
 
     return (
-        <div>
-            {message}
+        <div className="game_status">
+            <div className="button-53">
+                {message}
+            </div>
         </div>
     );
 }
@@ -27,7 +29,7 @@ function GameStatus({ player, winner = null}) {
 function Button({ onClickCb, text }) {
     return (
         <div>
-            <button onClick={onClickCb}>{text}</button>
+            <button className="button-53" onClick={onClickCb}>{text}</button>
         </div>
     )
 }
@@ -148,8 +150,10 @@ export default function Game() {
         <>
             <GameStatus player={player} winner={winner}/>
             <Board squares={squares} squareClickedCb={squareClicked} />
-            <Button onClickCb={resetGameCb} text='Reset game' />
-            <Button onClickCb={prevHistoryCb} text='Prev move' />
+            <div className="game_control">
+                <Button onClickCb={resetGameCb} text='Reset game' />
+                <Button onClickCb={prevHistoryCb} text='Prev move' />
+            </div>
 
         </>
     );
@@ -183,22 +187,22 @@ export function Board({squares, squareClickedCb, }) {
     // and not a function call, hence the use of anonymous function
     // TODO: error prone with the index typed manually
     return (
-        <>
-            <div className="board-row">
+        <div className="board">
+            <div className="board_row">
                 <Square symbol={squares[0]} onSquareClicked={ () => squareClickedCb(0) }/>
                 <Square symbol={squares[1]} onSquareClicked={ () => squareClickedCb(1) }/>
                 <Square symbol={squares[2]} onSquareClicked={ () => squareClickedCb(2) }/>
             </div>
-            <div className="board-row">
+            <div className="board_row">
                 <Square symbol={squares[3]} onSquareClicked={ () => squareClickedCb(3) }/>
                 <Square symbol={squares[4]} onSquareClicked={ () => squareClickedCb(4) }/>
                 <Square symbol={squares[5]} onSquareClicked={ () => squareClickedCb(5) }/>
             </div>
-            <div className="board-row">
+            <div className="board_row">
                 <Square symbol={squares[6]} onSquareClicked={ () => squareClickedCb(6) }/>
                 <Square symbol={squares[7]} onSquareClicked={ () => squareClickedCb(7) }/>
                 <Square symbol={squares[8]} onSquareClicked={ () => squareClickedCb(8) }/>
             </div>
-        </>
+        </div>
     );
 }
