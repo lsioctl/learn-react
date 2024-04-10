@@ -1,4 +1,4 @@
-const { client } = require('./db.js');
+const { db } = require('@vercel/postgres');
 const {
   invoices,
   customers,
@@ -161,12 +161,14 @@ async function seedRevenue(client) {
 }
 
 async function main() {
+  const client = await db.connect();
+
   await seedUsers(client);
   await seedCustomers(client);
   await seedInvoices(client);
   await seedRevenue(client);
-  
-  await client.sql.end({ timeout: 5 })
+
+  await client.end();
 }
 
 main().catch((err) => {

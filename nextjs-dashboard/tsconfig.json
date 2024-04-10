@@ -30,5 +30,12 @@
     "app/lib/placeholder-data.js",
     "scripts/seed.js"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  // this one took me time to allow running npx ts-node file.ts
+  // I had the error: (node:44383) Warning: To load an ES module, set "type": "module" in the package.json or use the .mjs extension.
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  }
 }
