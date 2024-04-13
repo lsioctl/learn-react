@@ -12,6 +12,22 @@ import { custom } from 'zod';
 
 const prisma = new PrismaClient();
 
+/**
+ * Note: caution where npx prismage generate is typed:
+ * 
+ * * if in the ../ folder, where .env resides, .env will be well loaded
+ * * if in this folder, .env is badly loaded
+ * 
+ * npx prisma generate
+ * Environment variables loaded from .env
+ * Prisma schema loaded from prisma/schema.prisma
+ * 
+ * Next seems unaffected though, the issue is only where running this script
+ * with npx ts-node
+ * 
+ * 
+ */
+
 async function main() {
   // TODO: maybe a way to make it DRY
   // but my goal for now is just to move forward on the tutorial

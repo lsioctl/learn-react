@@ -28,6 +28,8 @@ model Customers {
   name        String   @db.VarChar(255)
   email       String   @db.VarChar(255)
   image_url   String   @db.VarChar(255)
+  // Relation fields define connections between models at the Prisma ORM level and do not exist in the database. These fields are used to generate Prisma Client.
+  invoices    Invoices[]
 }
 
 model Revenue {
@@ -37,7 +39,10 @@ model Revenue {
 
 model Invoices {
   id          String   @id @default(dbgenerated("public.uuid_generate_v4()")) @db.Uuid
-  customer_id String   @unique @db.Uuid
+  // Relation fields define connections between models at the Prisma ORM level and do not exist in the database. These fields are used to generate Prisma Client.
+  customers   Customers @relation(fields: [customer_id], references: [id])
+  // feels the type String @db.Uuid redondant and error prone here. It should just be the same as Customers.id
+  customer_id String @db.Uuid
   amount      Int
   status      String   @db.VarChar(255)
   date        DateTime

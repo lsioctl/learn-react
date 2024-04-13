@@ -41,5 +41,5 @@ CREATE TABLE "Invoices" (
 -- CreateIndex
 CREATE UNIQUE INDEX "Revenue_month_key" ON "Revenue"("month");
 
--- CreateIndex
-CREATE UNIQUE INDEX "Invoices_customer_id_key" ON "Invoices"("customer_id");
+-- AddForeignKey
+ALTER TABLE "Invoices" ADD CONSTRAINT "Invoices_customer_id_fkey" FOREIGN KEY ("customer_id") REFERENCES "Customers"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
