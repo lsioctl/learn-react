@@ -6,6 +6,7 @@ import {
   Revenue,
   Invoices
 } from '@prisma/client';
+import { LatestInvoice } from './definitions';
 // import {
 //   CustomerField,
 //   CustomersTableType,
@@ -41,7 +42,7 @@ export async function fetchRevenue(): Promise<Revenue[]> {
   }
 }
 
-export async function fetchLatestInvoices() {
+export async function fetchLatestInvoices(): Promise<LatestInvoice[]> {
   try {
     // const data = await sql<LatestInvoiceRaw>`
     //   SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id

@@ -31,12 +31,24 @@ export type Revenue = {
   revenue: number;
 };
 
+// Without prisma join
+// export type LatestInvoice = {
+//   id: string;
+//   name: string;
+//   image_url: string;
+//   email: string;
+//   amount: string;
+// };
+
+// With prisma join:
 export type LatestInvoice = {
-  id: string;
-  name: string;
-  image_url: string;
-  email: string;
-  amount: string;
+  amount: string,
+  id: string,
+  customers: {
+      name: string,
+      email: string,
+      image_url: string,
+  };
 };
 
 // The database returns a number for amount, but we later format it to a string with the formatCurrency function
