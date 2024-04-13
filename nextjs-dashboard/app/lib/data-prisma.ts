@@ -52,23 +52,30 @@ export async function fetchLatestInvoices() {
 
     const data = await prisma.invoices.findMany({
       select: {
+        id: true,
         amount: true,
         customers: {
-          name: true,
-          image_url: true,
-          email: true
+          select: {
+            name: true,
+            image_url: true,
+            email: true
+          }
         }
       },
       take: 5,
       orderBy: {
         date: 'desc'
       }
-    })
+    });
+
+    console.log(data);
 
     const latestInvoices = data.map((invoice) => ({
       ...invoice,
       amount: formatCurrency(invoice.amount),
     }));
+
+    console.log(latestInvoices);
     return latestInvoices;
   } catch (error) {
     console.error('Database Error:', error);
