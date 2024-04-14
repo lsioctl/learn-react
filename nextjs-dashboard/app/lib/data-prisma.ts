@@ -17,23 +17,24 @@ import { LatestInvoice } from './definitions';
 //   Revenue,
 // } from './definitions';
 import { formatCurrency } from './utils';
+import { unstable_noStore as noStore } from 'next/cache';
 
 const prisma = new PrismaClient();
 
 export async function fetchRevenue(): Promise<Revenue[]> {
   // Add noStore() here to prevent the response from being cached.
   // This is equivalent to in fetch(..., {cache: 'no-store'}).
+  noStore();
 
   try {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
-
-    // console.log('Fetching revenue data...');
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
+    console.log('Fetching revenue data...');
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
     const allRevenues = await prisma.revenue.findMany();
 
-    // console.log('Data fetch completed after 3 seconds.');
+    console.log('Data fetch completed after 3 seconds.');
 
     return allRevenues;
   } catch (error) {
@@ -43,6 +44,8 @@ export async function fetchRevenue(): Promise<Revenue[]> {
 }
 
 export async function fetchLatestInvoices(): Promise<LatestInvoice[]> {
+  noStore();
+
   try {
     // const data = await sql<LatestInvoiceRaw>`
     //   SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
@@ -82,6 +85,8 @@ export async function fetchLatestInvoices(): Promise<LatestInvoice[]> {
 }
 
 export async function fetchCardData() {
+  noStore();
+
   try {
     // You can probably combine these into a single SQL query
     // However, we are intentionally splitting them to demonstrate
