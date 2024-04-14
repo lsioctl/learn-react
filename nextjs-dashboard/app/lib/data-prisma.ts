@@ -69,14 +69,11 @@ export async function fetchLatestInvoices(): Promise<LatestInvoice[]> {
       }
     });
 
-    console.log(data);
-
     const latestInvoices = data.map((invoice) => ({
       ...invoice,
       amount: formatCurrency(invoice.amount),
     }));
 
-    console.log(latestInvoices);
     return latestInvoices;
   } catch (error) {
     console.error('Database Error:', error);
@@ -84,40 +81,56 @@ export async function fetchLatestInvoices(): Promise<LatestInvoice[]> {
   }
 }
 
-// export async function fetchCardData() {
-//   try {
-//     // You can probably combine these into a single SQL query
-//     // However, we are intentionally splitting them to demonstrate
-//     // how to initialize multiple queries in parallel with JS.
-//     const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
-//     const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
-//     const invoiceStatusPromise = sql`SELECT
-//          SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
-//          SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
-//          FROM invoices`;
+export async function fetchCardData() {
+  try {
+    // You can probably combine these into a single SQL query
+    // However, we are intentionally splitting them to demonstrate
+    // how to initialize multiple queries in parallel with JS.
+    const invoiceCountPromise = prisma.invoices.count();
+    const customerCountPromise = prisma.customers.count();
+    // it does not seem to be implemented in prisma and I really don't want
+    // to go there.
+    // It is a good test for raw queries though, and no risk of SQL injection
+    // as we have no user input here
+    // note the FROM public."Invoices"
+    // if not present an error "relation not found" is raised by Postgres
+    // public is not in Show search path
+    // and quotes seem necessary
+    const invoiceStatusPromise = prisma.$queryRaw`SELECT
+         SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
+         SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
+         FROM public."Invoices"`;
 
-//     const data = await Promise.all([
-//       invoiceCountPromise,
-//       customerCountPromise,
-//       invoiceStatusPromise,
-//     ]);
+    const data = await Promise.all([
+      invoiceCountPromise,
+      customerCountPromise,
+      invoiceStatusPromise,
+    ]);
 
-//     const numberOfInvoices = Number(data[0].rows[0].count ?? '0');
-//     const numberOfCustomers = Number(data[1].rows[0].count ?? '0');
-//     const totalPaidInvoices = formatCurrency(data[2].rows[0].paid ?? '0');
-//     const totalPendingInvoices = formatCurrency(data[2].rows[0].pending ?? '0');
+    // I have an error as data[2] type is 'unknown';
+    // this raw query is a mess with Prisma :D
+    let formated_data = data[2] as {paid: number, pending: number}[];
 
-//     return {
-//       numberOfCustomers,
-//       numberOfInvoices,
-//       totalPaidInvoices,
-//       totalPendingInvoices,
-//     };
-//   } catch (error) {
-//     console.error('Database Error:', error);
-//     throw new Error('Failed to fetch card data.');
-//   }
-// }
+    console.log(formated_data);
+
+    const numberOfInvoices = data[0];
+    const numberOfCustomers = data[1];
+    // TODO: without Number conversion:
+    // TypeError: Cannot mix BigInt and other types, use explicit conversions
+    const totalPaidInvoices = formatCurrency(Number(formated_data[0].paid));
+    const totalPendingInvoices = formatCurrency(Number(formated_data[0].pending));
+
+    return {
+      numberOfCustomers,
+      numberOfInvoices,
+      totalPaidInvoices,
+      totalPendingInvoices,
+    };
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch card data.');
+  }
+}
 
 // const ITEMS_PER_PAGE = 6;
 // export async function fetchFilteredInvoices(
