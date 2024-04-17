@@ -47,12 +47,10 @@ export async function fetchLatestInvoices(): Promise<LatestInvoice[]> {
   noStore();
 
   try {
-    // const data = await sql<LatestInvoiceRaw>`
-    //   SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
-    //   FROM invoices
-    //   JOIN customers ON invoices.customer_id = customers.id
-    //   ORDER BY invoices.date DESC
-    //   LIMIT 5`;
+    // Artificially delay a response for demo purposes.
+    // Don't do this in production :)
+    console.log('Fetching LatestInvoices data...');
+    await new Promise((resolve) => setTimeout(resolve, 5000));
 
     const data = await prisma.invoices.findMany({
       select: {
@@ -76,6 +74,8 @@ export async function fetchLatestInvoices(): Promise<LatestInvoice[]> {
       ...invoice,
       amount: formatCurrency(invoice.amount),
     }));
+
+    console.log('Data fetch completed after 5 seconds.');
 
     return latestInvoices;
   } catch (error) {
