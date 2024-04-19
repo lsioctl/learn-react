@@ -1,4 +1,4 @@
-import { fetchLatestInvoices, fetchCardData } from '@/app/lib/data-prisma';
+import { fetchCardData } from '@/app/lib/data';
 import { Card } from '@/app/ui/dashboard/cards';
 import RevenueChart from '@/app/ui/dashboard/revenue-chart';
 import LatestInvoices from '@/app/ui/dashboard/latest-invoices';

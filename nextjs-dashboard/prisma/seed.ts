@@ -10,9 +10,7 @@ import {
 import bcrypt from 'bcrypt';
 import { custom } from 'zod';
 
-const prisma = new PrismaClient();
-
-/**
+/*
  * Note: caution where npx prismage generate is typed:
  * 
  * * if in the ../ folder, where .env resides, .env will be well loaded
