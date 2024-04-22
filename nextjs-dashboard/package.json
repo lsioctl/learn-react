@@ -2,11 +2,11 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "prettier": "prettier --write --ignore-unknown .",
     "prettier:check": "prettier --check --ignore-unknown .",
     "seed": "ts-node -r dotenv/config ./scripts/seed.js",
-    "start": "next start"
+    "start": "next start -p 3001"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",

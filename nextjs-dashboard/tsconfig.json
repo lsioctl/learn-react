@@ -28,7 +28,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/lib/placeholder-data.js",
-    "scripts/seed.js"
+    "scripts/*.ts",
+    "scripts/*.js",
   ],
   "exclude": ["node_modules"],
   // this one took me time to allow running npx ts-node file.ts
