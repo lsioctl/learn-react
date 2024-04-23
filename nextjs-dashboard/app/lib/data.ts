@@ -93,6 +93,8 @@ export async function fetchFilteredInvoices(
   query: string,
   currentPage: number,
 ) {
+  console.log('Fetching invoices with query:');
+  console.log(query);
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
