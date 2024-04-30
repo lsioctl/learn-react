@@ -12,8 +12,13 @@ import {
 import { Button } from '@/app/ui/button';
 import { createInvoice } from '@/app/lib/actions';
 
+// SEC TEST TO REMOVE
+import sql from '@/app/lib/db';
+
 // server actions create automatically a POST endpoint
 export default function Form({ customers }: { customers: CustomerField[] }) {
+
+  console.log(sql);
   const initialState = { message: null, errors: {} };
   const [state, dispatch] = useFormState(createInvoice, initialState);
 
